@@ -1,4 +1,3 @@
-@Internal
 public interface UserAdHocActivityService {
 
 	void registerActivity(UserAccount UserAccount, String activityName);
