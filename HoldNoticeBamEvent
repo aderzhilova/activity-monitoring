@@ -1,0 +1,61 @@
+@CanInvoke
+public class HoldNoticeBamEvent extends UserBamEvent {
+	private static final long serialVersionUID = 6936838635203965424L;
+
+    private String policyNumber;
+    private Date effectiveDate;
+    private Date dueDate;
+	private String suffix;
+
+    public HoldNoticeBamEvent(UserAccount account, String policyNumber, Date effectiveDate, Date dueDate) {
+		this(account, policyNumber, null, effectiveDate, dueDate);
+	}
+    
+    public HoldNoticeBamEvent(UserAccount account, String policyNumber, String suffix, Date effectiveDate, Date dueDate) {
+		super(account);
+		this.policyNumber = policyNumber;
+		this.effectiveDate = effectiveDate;
+		this.dueDate = dueDate;
+		this.suffix = suffix;
+	}
+
+    public UserAccount getUserAccount() {
+        return (UserAccount) super.getSource();
+    }
+
+	public BillablePolicyTerm getBillablePolicyTerm(){
+        if (policyNumber != null && effectiveDate != null) {
+            return getUserAccount().getPolicy(policyNumber, effectiveDate, suffix);
+        } else {
+            return null;
+        }
+    }
+
+    public String getPolicyNumber() {
+        return policyNumber;
+    }
+
+    public void setPolicyNumber(String policyNumber) {
+        this.policyNumber = policyNumber;
+    }
+
+    public Date getEffectiveDate() {
+        return effectiveDate;
+    }
+
+    public void setEffectiveDate(Date effectiveDate) {
+        this.effectiveDate = effectiveDate;
+    }
+    
+    public Date getDueDate() {
+		return dueDate;
+	}
+
+    @Override
+    public void invokeHandler(UserBamEventVisitor handler) {
+        handler.handleEvent(this);
+    }
+}
+
+
+
