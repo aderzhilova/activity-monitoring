@@ -4,10 +4,6 @@ public class UserBamEventHandlerImpl implements UserBamEventHandler {
 	private UserAdHocActivityService UserAdHocActivityService;
 	private PaymentDao paymentDao;
 
-	public void handleEvent(PaymentUpdatedEvent event) {
-		// No decline BAM event handling moved to handleEvent(PaymentDeclinedEvent event)
-	}
-	
 	public void handleEvent(PaymentDeclinedEvent event) {
 	    UserTransaction transaction = event.getTransaction();
         
@@ -19,11 +15,7 @@ public class UserBamEventHandlerImpl implements UserBamEventHandler {
 	    UserAdHocActivityService.registerActivity(transaction.getAccount(), transaction.getAmount(), 
 	            User_ACCOUNT_PAYMENT_STATUS_CHANGE, null, null, payment.getStatus().toString(), null, null, null);
 	}
-
-	public void handleEvent(PaymentCreatedEvent event) {
-		// BAM record not needed ? 
-	}
-
+	
 	public void handleEvent(AutomaticPaymentCreatedEvent event) {
 		UserAdHocActivityService.registerActivity(event.getAccount(), event.getAmount(), User_PAYMENT_RECURRING, null, null, null, null, null, null);
 	}
