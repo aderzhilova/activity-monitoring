@@ -1,0 +1,9 @@
+@Internal
+public interface UserAdHocActivityService {
+
+	void registerActivity(UserAccount UserAccount, String activityName);
+	void registerActivity(UserAccount UserAccount, String activityName, String messageId, String policyNumber, String comment);
+	void registerActivity(UserAccount UserAccount, String activityName, String messageId, String policyNumber, String comment, Date holdEffectiveDate);
+	void registerActivity(UserAccount UserAccount, String activityName, Date installmentDueDate);
+	void registerActivity(UserAccount UserAccount, String activityName, String policyNumber, Date dueDate);
+}
