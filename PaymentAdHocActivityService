@@ -1,0 +1,8 @@
+public interface PaymentAdHocActivityService {
+
+	void registerActivity(PaymentAccount PaymentAccount, String activityName);
+	void registerActivity(PaymentAccount PaymentAccount, String activityName, String messageId, String policyNumber, String comment);
+	void registerActivity(PaymentAccount PaymentAccount, String activityName, String messageId, String policyNumber, String comment, Date effectiveDate);
+	void registerActivity(PaymentAccount PaymentAccount, String activityName, Date installmentDueDate);
+	void registerActivity(PaymentAccount PaymentAccount, String activityName, String policyNumber, Date dueDate);
+}
