@@ -1,0 +1,35 @@
+public class PaymentBamEventHandlerImpl implements PaymentBamEventHandler {
+
+	private PaymentAdHocActivityService PaymentAdHocActivityService;
+	private PaymentDao paymentDao;
+
+	public void handleEvent(PaymentDeclinedEvent event) {
+	    PaymentTransaction transaction = event.getTransaction();
+        
+	    if (transaction.getAmount().signum() < 0) {
+	        return;
+	    }
+	    
+	    Payment payment = paymentDao.findPaymentByNumber(event.getPaymentNumber()); 
+	    PaymentAdHocActivityService.registerActivity(transaction.getAccount(), transaction.getAmount(), 
+	            Payment_ACCOUNT_PAYMENT_STATUS_CHANGE, null, null, payment.getStatus().toString(), null, null, null);
+	}
+
+	public void handleEvent(AutomaticPaymentCreatedEvent event) {
+		PaymentAdHocActivityService.registerActivity(event.getAccount(), event.getAmount(), Payment_PAYMENT_RECURRING, null, null, null, null, null, null);
+	}
+
+	public void handleEvent(AutomaticRefundCreatedEvent event) {
+		PaymentAdHocActivityService.registerActivity(event.getAccount(), 
+				event.getAmount(), 
+				CREATED_AUTOMATED_REFUND, 
+				null, 
+				null, 
+				event.getStatus().getName(),
+				null, null, null);
+	}
+
+	public void handleEvent(HoldConfirmationBamEvent event) {
+		PaymentAdHocActivityService.registerActivity(event.getPaymentAccount(), Hold_CONFIRMATION, event.getPolicyNumber(), event.getDueDate());
+	}
+}
