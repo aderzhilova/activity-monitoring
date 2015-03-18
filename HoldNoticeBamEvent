@@ -1,4 +1,4 @@
-public class HoldNoticeBamEvent extends UserBamEvent {
+public class HoldNoticeBamEvent extends PaymentBamEvent {
 	private static final long serialVersionUID = 6936838635203965424L;
 
     private String policyNumber;
@@ -6,11 +6,11 @@ public class HoldNoticeBamEvent extends UserBamEvent {
     private Date dueDate;
 	private String suffix;
 
-    public HoldNoticeBamEvent(UserAccount account, String policyNumber, Date effectiveDate, Date dueDate) {
+    public HoldNoticeBamEvent(PaymentAccount account, String policyNumber, Date effectiveDate, Date dueDate) {
 		this(account, policyNumber, null, effectiveDate, dueDate);
 	}
     
-    public HoldNoticeBamEvent(UserAccount account, String policyNumber, String suffix, Date effectiveDate, Date dueDate) {
+    public HoldNoticeBamEvent(PaymentAccount account, String policyNumber, String suffix, Date effectiveDate, Date dueDate) {
 		super(account);
 		this.policyNumber = policyNumber;
 		this.effectiveDate = effectiveDate;
@@ -18,13 +18,13 @@ public class HoldNoticeBamEvent extends UserBamEvent {
 		this.suffix = suffix;
 	}
 
-    public UserAccount getUserAccount() {
-        return (UserAccount) super.getSource();
+    public PaymentAccount getPaymentAccount() {
+        return (PaymentAccount) super.getSource();
     }
 
 	public BillablePolicyTerm getBillablePolicyTerm(){
         if (policyNumber != null && effectiveDate != null) {
-            return getUserAccount().getPolicy(policyNumber, effectiveDate, suffix);
+            return getPaymentAccount().getPolicy(policyNumber, effectiveDate, suffix);
         } else {
             return null;
         }
@@ -51,7 +51,7 @@ public class HoldNoticeBamEvent extends UserBamEvent {
 	}
 
     @Override
-    public void invokeHandler(UserBamEventVisitor handler) {
+    public void invokeHandler(PaymentBamEventVisitor handler) {
         handler.handleEvent(this);
     }
 }
