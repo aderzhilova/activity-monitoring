@@ -1,4 +1,3 @@
-@Internal
 public interface UserBamEventVisitor {
     public void handleEvent(HoldConfirmationBamEvent event);
     public void handleEvent(HoldNoticeBamEvent event);
