@@ -1,4 +1,3 @@
-@CanInvoke
 public class HoldNoticeBamEvent extends UserBamEvent {
 	private static final long serialVersionUID = 6936838635203965424L;
 
