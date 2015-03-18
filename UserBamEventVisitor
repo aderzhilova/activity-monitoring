@@ -1,7 +1,0 @@
-public interface UserBamEventVisitor {
-    public void handleEvent(HoldConfirmationBamEvent event);
-    public void handleEvent(HoldNoticeBamEvent event);
-    public void handleEvent(UserHoldPoliciesBamEvent event);
-	public void handleEvent(SmallAmountWriteOffEvent event);
-    public void handleEvent(EarnedPremiumWriteOffEvent event);
-}

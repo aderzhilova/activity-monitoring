@@ -1,0 +1,7 @@
+public interface PaymentBamEventVisitor {
+    public void handleEvent(HoldConfirmationBamEvent event);
+    public void handleEvent(HoldNoticeBamEvent event);
+    public void handleEvent(HoldPoliciesBamEvent event);
+    public void handleEvent(SumOffEvent event);
+    public void handleEvent(PremiumWriteOffEvent event);
+}
