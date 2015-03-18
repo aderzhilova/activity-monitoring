@@ -1,4 +1,3 @@
-@Internal
 public class UserBamEventHandlerImpl implements UserBamEventHandler {
 
 	private UserAdHocActivityService UserAdHocActivityService;
