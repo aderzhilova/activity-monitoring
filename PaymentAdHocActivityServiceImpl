@@ -1,0 +1,96 @@
+public class PaymentAdHocActivityServiceImpl implements PaymentAdHocActivityService, ApplicationContextAware  {
+
+	protected final static String BAM_DISPATCHER_BEAN = "bamDispatcher";
+
+	private ApplicationContext applicationContext;
+	private CurrentPaymentService currentPaymentService;
+	private PaymentHoldService PaymentHoldService;
+	
+	public void setApplicationContext(ApplicationContext applicationContext) {
+		this.applicationContext = applicationContext;
+	}
+
+	public void setCurrentPaymentService(CurrentPaymentService currentPaymentService) {
+		this.currentPaymentService = currentPaymentService;
+	}
+	
+	public void setPaymentHoldService(PaymentHoldService PaymentHoldService) {
+		this.PaymentHoldService = PaymentHoldService;
+	}
+
+	public void registerActivity(PaymentAccount PaymentAccount, BigDecimal amount, String activityName, String messageId, String policyNumber, String comment, Date installmentDueDate, Date HoldEffectiveDate, PaymentAccountStatus PaymentAccountStatus){
+		
+		PaymentAccountActivity activity = new PaymentAccountActivity();
+
+		activity.setName(activityName);
+		if(null != messageId){
+			activity.setMessageId(messageId);
+		} else {
+			//generate message id as name prefixed by "adhoc" and removed possible non-alpha symbols
+		    String generatedId = "adhoc" + StringUtils.remove(StringUtils.deleteWhitespace(activityName), '-');
+			activity.setMessageId(generatedId);
+		}
+		if(null != PaymentAccount){
+			activity.setPrimaryEntityId(PaymentAccount.getAccountNumber());
+			activity.setPaymentAccountNumber(PaymentAccount.getAccountNumber());
+			activity.setCurrency(PaymentAccount.getPaymentInfo().getCurrency());
+		    activity.setCustomerNumber(PaymentAccount.getPaymentInfo().getCustomerNumber());
+		}
+	    activity.setStartedTime(DateUtils.getCurrentTimestamp());
+	    activity.setEndedTime(DateUtils.getCurrentTimestamp());
+	    activity.setLastStatus(ActivityStatus.FINISHED);
+	    activity.setPerformerId(currentPaymentService.getCurrentPayment().getName());
+	    activity.setInstallmentDueDate(installmentDueDate);
+	    activity.setPaymentTransactionDate(HoldEffectiveDate);
+	    if (PaymentAccountStatus != null) {
+	    	activity.setPaymentAccountStatus(statusConverter(PaymentAccountStatus));
+	    }
+	    	    	    	    
+	    EventDispatcher dispatcher = (EventDispatcher)applicationContext.getBean(BAM_DISPATCHER_BEAN);
+		dispatcher.dispatch(new ActivityCreatedEvent(activity));
+	}
+	
+	public void registerActivity(BillablePolicyTerm policyTerm, String accountNumber, String activityName, String messageId, String comment, Date HoldEffectiveDate){
+		
+		PaymentAccountActivity activity = new PaymentAccountActivity();
+
+		activity.setName(activityName);
+		if(null != messageId){
+			activity.setMessageId(messageId);
+		} else {
+			//generate message id as name prefixed by "adhoc" and removed possible non-alpha symbols
+		    String generatedId = "adhoc" + StringUtils.remove(StringUtils.deleteWhitespace(activityName), '-');
+			activity.setMessageId(generatedId);
+		}
+		activity.setPrimaryEntityId(accountNumber);
+		activity.setPaymentAccountNumber(accountNumber);
+	    activity.setStartedTime(DateUtils.getCurrentTimestamp());
+	    activity.setEndedTime(DateUtils.getCurrentTimestamp());
+	    activity.setLastStatus(ActivityStatus.FINISHED);
+	    activity.setPerformerId(currentPaymentService.getCurrentPayment().getName());
+	    activity.setPaymentTransactionDate(HoldEffectiveDate);
+	    if (policyTerm != null) {
+		    activity.setPolicyNumber(policyTerm.getPolicyNumber());
+	    	activity.setPolicyBillableStatus(statusConverter(policyTerm));
+	    }
+	    activity.setCommentText(comment);
+	    EventDispatcher dispatcher = (EventDispatcher)applicationContext.getBean(BAM_DISPATCHER_BEAN);
+		dispatcher.dispatch(new ActivityCreatedEvent(activity));
+	}
+	
+	public void registerActivity(PaymentAccount PaymentAccount, String activityName, String policyNumber, Date dueDate){
+		registerActivity(PaymentAccount, null, activityName, null, policyNumber, null, dueDate, null, null);
+	}
+	
+	    public void registerActivity(PaymentAccount PaymentAccount, String activityName, String policyNumber){
+        registerActivity(PaymentAccount, null, activityName, null, policyNumber, null, null, null, null);
+    }
+
+	public void registerActivity(PaymentAccount PaymentAccount, String activityName, String messageId, String policyNumber, String comment){
+		registerActivity(PaymentAccount, null, activityName, messageId, policyNumber, comment, null, null, null);
+	}
+
+	public void registerActivity(PaymentAccount PaymentAccount, String activityName){
+		registerActivity(PaymentAccount, activityName, null, null, null);
+	}
+}
