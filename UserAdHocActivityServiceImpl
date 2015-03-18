@@ -1,11 +1,6 @@
-@Internal
 public class UserAdHocActivityServiceImpl implements UserAdHocActivityService, ApplicationContextAware  {
 
 	protected final static String BAM_DISPATCHER_BEAN = "bamDispatcher";
-	
-	private final static String ON_HOLD = "On Hold";
-	private final static String HOLD_PENDING = "Hold Pending";
-	private final static String ACTIVE = "Active";
 
 	private ApplicationContext applicationContext;
 	private CurrentUserService currentUserService;
